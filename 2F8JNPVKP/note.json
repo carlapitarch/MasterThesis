@@ -1,0 +1,430 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n\n### **Reading Data**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:56:41.941",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eReading Data\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775362029_-2061899244",
+      "id": "20200413-105602_857159326",
+      "dateCreated": "2020-04-13 10:56:02.030",
+      "dateStarted": "2020-04-13 10:56:41.942",
+      "dateFinished": "2020-04-13 10:56:41.948",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\nval alldata0 \u003d spark.read.parquet(\"hdfs:///data/alldata_index.parquet\")\nval pheno \u003d spark.read.parquet(\"hdfs:///data/pheno.parquet\")",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:56:29.841",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775375555_2076869532",
+      "id": "20200413-105615_238140384",
+      "dateCreated": "2020-04-13 10:56:15.555",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n\n### **Explode function**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:57:06.346",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eExplode function\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775389914_945912946",
+      "id": "20200413-105629_1652279722",
+      "dateCreated": "2020-04-13 10:56:29.915",
+      "dateStarted": "2020-04-13 10:57:06.346",
+      "dateFinished": "2020-04-13 10:57:06.352",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nimport org.apache.spark.sql.DataFrame\nimport org.apache.spark.sql.functions.{array, col, explode, lit, struct}\n\n\ndef toLong(df2: DataFrame, by: Seq[String]): DataFrame \u003d {\n  val (cols, types) \u003d df2.dtypes.filter{ case (c, _) \u003d\u003e !by.contains(c)}.unzip\n  require(types.distinct.size \u003d\u003d 1, s\"${types.distinct.toString}.length !\u003d 1\")      \n  val kvs \u003d explode(array(\n    cols.map(c \u003d\u003e struct(lit(c).alias(\"key\"), col(c).alias(\"value\"))): _*\n  ))\n  val byExprs \u003d by.map(col(_))\n  df2\n    .select(byExprs :+ kvs.alias(\"_kvs\"): _*)\n    .select(byExprs ++ Seq($\"_kvs.key\", $\"_kvs.value\"): _*)\n}",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:57:42.783",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775426329_1035678751",
+      "id": "20200413-105706_1077535794",
+      "dateCreated": "2020-04-13 10:57:06.329",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n\n### **Defining Required Classes**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:58:51.224",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eDefining Required Classes\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775435253_400419965",
+      "id": "20200413-105715_1383032167",
+      "dateCreated": "2020-04-13 10:57:15.253",
+      "dateStarted": "2020-04-13 10:58:51.224",
+      "dateFinished": "2020-04-13 10:58:51.236",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nimport org.apache.spark.ml.feature.LabeledPoint \n\ncase class Pt(IID: String, features: Array[(Int, Double)], Obesity: Double)\n\ncase class pSNP(IID: String, Obesity: Double, index: Int, value: Double)\n\ncase class PtGroup(IID: String, Index: Array[Int], Value: Array[Double], Obesity: Double)\n\ncase class LPP(IID:String,LP:LabeledPoint)",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:57:37.831",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775451363_1405948686",
+      "id": "20200413-105731_1316929066",
+      "dateCreated": "2020-04-13 10:57:31.363",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md \n\n### **Defining Required Functions**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:58:52.556",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eDefining Required Functions\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775477551_1166431190",
+      "id": "20200413-105757_115874731",
+      "dateCreated": "2020-04-13 10:57:57.551",
+      "dateStarted": "2020-04-13 10:58:52.562",
+      "dateFinished": "2020-04-13 10:58:52.571",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\n\nimport org.apache.spark.sql._\nimport org.apache.spark.ml.linalg._\nimport org.apache.spark.ml.feature.LabeledPoint \n\n\n\ndef Rows2SNP(data:DataFrame): Dataset[pSNP] \u003d data.map((f) \u003d\u003e pSNP(IID \u003d f(0).asInstanceOf[String], Obesity \u003d f(1).asInstanceOf[Double], index \u003d f(2).asInstanceOf[Int], value \u003d f(3).asInstanceOf[Double]))\n\n\n\ndef snp2pt(snpDs:Dataset[pSNP]): Dataset[Pt] \u003d {\n  snpDs\n    .map((f) \u003d\u003e (\n      Pt(\n        IID\u003df.IID,\n        Obesity\u003df.Obesity,\n        features \u003d Array((f.index, f.value))\n      )))\n}\n\n\ndef groupByPatient(pDs: Dataset[Pt]):Dataset[Pt] \u003d{\n    pDs\n        .groupByKey(_.IID)\n        .reduceGroups((f1,f2) \u003d\u003e\n          Pt(IID\u003df1.IID,\n            features\u003df1.features ++ f2.features,\n            Obesity\u003df1.Obesity\n          )\n        )\n        .map(_._2)\n        .map((f)\u003d\u003e\n         Pt(IID\u003df.IID,\n            features\u003df.features.sortBy(_._1),\n            Obesity\u003df.Obesity\n           )\n        )\n}\n\n\n\ndef grouped2LabeledPoint(pDs: Dataset[Pt]):Dataset[LPP] \u003d {\n    pDs\n    .map((f) \u003d\u003e PtGroup(IID\u003df.IID,Index\u003df.features.unzip._1,Value\u003df.features.unzip._2,Obesity\u003df.Obesity))\n    .map((f) \u003d\u003e LPP(IID\u003df.IID,LP\u003dLabeledPoint(f.Obesity,Vectors.sparse(19581634,f.Index,f.Value))))\n}\n",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 11:03:33.980",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775462860_1208998915",
+      "id": "20200413-105742_1688468646",
+      "dateCreated": "2020-04-13 10:57:42.860",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n\n### **Defining the Function for the Loop**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:59:57.704",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eDefining the Function for the Loop\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775550015_593522185",
+      "id": "20200413-105910_940957429",
+      "dateCreated": "2020-04-13 10:59:10.015",
+      "dateStarted": "2020-04-13 10:59:57.704",
+      "dateFinished": "2020-04-13 10:59:57.709",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nspark.conf.set(\"spark.sql.shuffle.partitions\", 2100)\n\ndef looplabeledpoint(selectColumns:Seq[Seq[String]]): Unit\u003d{\n    \n    for (colname \u003c- selectColumns){ \n\n        //selecting 2 columns per iteration\n        val alldata \u003d alldata0.select((colname :+ \"index\").map(col): _*)\n\n        //Long format\n        val prova \u003d toLong(alldata.select(alldata.columns.map(c \u003d\u003e upper(col(c)).alias(c)): _*), Seq(\"index\"))\n\n        \n        val databypt \u003d prova.withColumn(\"index\",col(\"index\").cast(\"int\")).withColumn(\"value\",col(\"value\").cast(\"double\"))\n    \n        //Merging Long format + phenotype\n        val data \u003d databypt\n                .join(broadcast(pheno), $\"IID\" \u003d\u003d\u003d $\"key\", \"left\")\n                .select(\"IID\",\"Obesity\",\"index\",\"value\")\n    \n        //Grouping data + final labeled point\n        val labeledpoint \u003d data.transform(Rows2SNP)\n                        .transform(snp2pt)\n                        .transform(groupByPatient)\n                        .transform(grouped2LabeledPoint)  \n                        \n        //writing labeledpoint file\n        labeledpoint.write.option(\"compression\",\"snappy\").mode(\"append\").partitionBy(\"IID\").parquet(\"hdfs:///data/labeledpoint.parquet\")\n        \n        //writing completeds file\n        colname.toDF.write.mode(\"append\").parquet(\"hdfs:///data/completeds.parquet\")\n    }\n    \n}",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 10:59:28.154",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775500737_1570557415",
+      "id": "20200413-105820_1921946727",
+      "dateCreated": "2020-04-13 10:58:20.737",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n\n### **Applying the Loop**",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 11:01:15.058",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "editorMode": "ace/mode/markdown",
+        "editorHide": true,
+        "tableHide": false
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch3\u003e\u003cstrong\u003eApplying the Loop\u003c/strong\u003e\u003c/h3\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775615880_-1849962446",
+      "id": "20200413-110015_1371333071",
+      "dateCreated": "2020-04-13 11:00:15.880",
+      "dateStarted": "2020-04-13 11:01:15.060",
+      "dateFinished": "2020-04-13 11:01:15.071",
+      "status": "FINISHED",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nval allcolumns \u003d alldata0.columns.toSeq.filter(_ !\u003d \"index_0\").filter(_ !\u003d \"SNP\").slice(0,4988)\n\n\nval conf \u003d sc.hadoopConfiguration\nval fs \u003d org.apache.hadoop.fs.FileSystem.get(conf)\nval exists \u003d fs.exists(new org.apache.hadoop.fs.Path(\"hdfs:///data/completeds.parquet\"))\n\n\nval n \u003d 2\n\n\nif (exists){\n    val calculats: Set[String] \u003d spark.read.parquet(\"hdfs:///data/completeds.parquet\").collect.map(_(0).toString).toSet\n    val remaining \u003d allcolumns.filterNot(calculats)\n    looplabeledpoint(remaining.sliding(n,n).toSeq)\n} else{\n    val remaining \u003d allcolumns\n    looplabeledpoint(remaining.sliding(n,n).toSeq)\n}",
+      "user": "admin",
+      "dateUpdated": "2020-04-13 11:00:15.788",
+      "config": {
+        "colWidth": 12.0,
+        "fontSize": 9.0,
+        "enabled": true,
+        "results": {},
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "editorMode": "ace/mode/scala"
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "apps": [],
+      "jobName": "paragraph_1586775568247_403203375",
+      "id": "20200413-105928_894215176",
+      "dateCreated": "2020-04-13 10:59:28.247",
+      "status": "READY",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Transformations",
+  "id": "2F8JNPVKP",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {
+    "md:shared_process": [],
+    "spark2:shared_process": []
+  },
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}
