@@ -1,0 +1,403 @@
+{
+  "paragraphs": [
+    {
+      "text": "%md\n#### **Reading Long data and Phenotype (Obesity)**",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.370",
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003e\u003cstrong\u003eReading Long data and Phenotype (Obesity)\u003c/strong\u003e\u003c/h4\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246368_1260537857",
+      "id": "20200331-141429_812265261",
+      "dateCreated": "2020-03-31 17:37:26.369",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\nval databypt \u003d spark.read.parquet(\"hdfs:///data/data_long_bypt2.parquet\")\n                .withColumn(\"index\",col(\"index\").cast(\"Int\"))\n                .withColumn(\"val\",col(\"val\").cast(\"Double\"))\n\nval pheno \u003d spark.read.format(\"csv\").option(\"header\",\"true\").option(\"delimiter\",\"\\t\").load(\"hdfs:///data/GCAT_imputed.psam\")\n                .select(\"IID\",\"PHENO1\")\n                .withColumnRenamed(\"PHENO1\",\"Obesity\")\n                .withColumn(\"Obesity\",col(\"Obesity\").cast(\"int\"))\n                .withColumn(\"Obesity\",col(\"Obesity\")-1)\n                \nval data \u003d databypt\n                .join(pheno, $\"IID\" \u003d\u003d\u003d $\"key\", \"left\")\n                .select(\"IID\",\"Obesity\",\"index\",\"val\")\n                .withColumn(\"Obesity\",col(\"Obesity\").cast(\"Double\"))\n                .withColumnRenamed(\"val\",\"value\")\n                .orderBy(\"index\")",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.373",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "databypt0: org.apache.spark.sql.DataFrame \u003d [index: string, val: string ... 1 more field]\ndatabypt: org.apache.spark.sql.DataFrame \u003d [index: int, val: double ... 1 more field]\npsam: org.apache.spark.sql.DataFrame \u003d [#FID: string, IID: string ... 2 more fields]\npsam2: org.apache.spark.sql.DataFrame \u003d [IID: string, Obesity: string]\npsam3: org.apache.spark.sql.DataFrame \u003d [IID: string, Obesity: int]\npheno: org.apache.spark.sql.DataFrame \u003d [IID: string, Obesity: int]\ndata: org.apache.spark.sql.Dataset[org.apache.spark.sql.Row] \u003d [IID: string, Obesity: double ... 2 more fields]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246373_620915244",
+      "id": "20200331-141345_102550062",
+      "dateCreated": "2020-03-31 17:37:26.373",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n#### **Defining required classes**",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.373",
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003e\u003cstrong\u003eDefining required classes\u003c/strong\u003e\u003c/h4\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246373_943185927",
+      "id": "20200331-141549_2053594553",
+      "dateCreated": "2020-03-31 17:37:26.373",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\ncase class Pt(IID: String, features: (Array[Int], Array[Double]), Obesity: Double)\n\ncase class pSNP(IID: String, Obesity: Double, index: Int, value: Double)\n\ncase class PtGroup(Index: Array[Int], Value: Array[Double], Obesity: Double)",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.373",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "defined class Pt\ndefined class pSNP\ndefined class PtGroup\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246373_-199512952",
+      "id": "20200331-141522_61115839",
+      "dateCreated": "2020-03-31 17:37:26.373",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n#### **Defining required functions to transform the data**",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.374",
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003e\u003cstrong\u003eDefining required functions to transform the data\u003c/strong\u003e\u003c/h4\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246374_-827493588",
+      "id": "20200331-141621_442657218",
+      "dateCreated": "2020-03-31 17:37:26.374",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nimport org.apache.spark.sql._\nimport org.apache.spark.mllib.linalg._\nimport org.apache.spark.mllib.regression.LabeledPoint\n\n\ndef Rows2SNP(data:DataFrame): Dataset[pSNP] \u003d data.map((f) \u003d\u003e pSNP(IID \u003d f(0).asInstanceOf[String], Obesity \u003d f(1).asInstanceOf[Double], index \u003d f(2).asInstanceOf[Int], value \u003d f(3).asInstanceOf[Double]))\n\ndef snp2pt(snpDs:Dataset[pSNP]): Dataset[Pt] \u003d {\n  snpDs\n    .map((f) \u003d\u003e (\n      Pt(\n        IID\u003df.IID,\n        Obesity\u003df.Obesity,\n        features \u003d (Array(f.index), Array(f.value))\n      )))\n}\n\ndef groupByPatient(pDs: Dataset[Pt]):Dataset[Pt] \u003d{\n    pDs\n        .groupByKey(_.IID)\n        .reduceGroups((f1,f2) \u003d\u003e\n          Pt(IID\u003df1.IID,\n            features\u003d((f1.features._1 ++ f2.features._1), (f1.features._2 ++ f2.features._2)),\n            Obesity\u003df1.Obesity\n          )\n        )\n        .map(_._2)\n}\n\ndef grouped2LabeledPoint(pDs: Dataset[Pt]):Dataset[LabeledPoint] \u003d {\n    pDs\n    .map((f) \u003d\u003e PtGroup(Index\u003df.features._1,Value\u003df.features._2,Obesity\u003df.Obesity))\n    .map((f) \u003d\u003e LabeledPoint(f.Obesity,Vectors.sparse(19581633,f.Index,f.Value)))\n}",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.374",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.sql._\nRows2SNP: (data: org.apache.spark.sql.DataFrame)org.apache.spark.sql.Dataset[pSNP]\nsnp2pt: (snpDs: org.apache.spark.sql.Dataset[pSNP])org.apache.spark.sql.Dataset[Pt]\ngroupByPatient: (pDs: org.apache.spark.sql.Dataset[Pt])org.apache.spark.sql.Dataset[Pt]\nimport org.apache.spark.mllib.linalg._\nimport org.apache.spark.mllib.regression.LabeledPoint\ngrouped2LabeledPoint: (pDs: org.apache.spark.sql.Dataset[Pt])org.apache.spark.sql.Dataset[PtGroup]\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246374_-1473104939",
+      "id": "20200331-141602_815001395",
+      "dateCreated": "2020-03-31 17:37:26.374",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n#### **Applying transformations and LabeledPoint function to the data**",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.374",
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003e\u003cstrong\u003eApplying transformations and LabeledPoint function to the data\u003c/strong\u003e\u003c/h4\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246374_1727675756",
+      "id": "20200331-141729_468274850",
+      "dateCreated": "2020-03-31 17:37:26.374",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark2\n\nimport org.apache.spark.mllib.linalg._\nimport org.apache.spark.mllib.regression.LabeledPoint\n\nval dataLabeledPoint \u003d data\n                        .transform(Rows2SNP)\n                        .transform(snp2pt)\n                        .transform(groupByPatient)\n                        .transform(grouped2LabeledPoint)\n                        .rdd",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.375",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "import org.apache.spark.mllib.linalg._\nimport org.apache.spark.mllib.regression.LabeledPoint\ndataLabeledPoint: org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint] \u003d MapPartitionsRDD[415] at rdd at \u003cconsole\u003e:112\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246375_-1887904030",
+      "id": "20200331-141701_988060870",
+      "dateCreated": "2020-03-31 17:37:26.375",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%md\n#### **Saving data into LibSVM format**",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.375",
+      "config": {
+        "tableHide": false,
+        "editorSetting": {
+          "language": "markdown",
+          "editOnDblClick": true,
+          "completionKey": "TAB",
+          "completionSupport": false
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/markdown",
+        "fontSize": 9.0,
+        "editorHide": true,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "SUCCESS",
+        "msg": [
+          {
+            "type": "HTML",
+            "data": "\u003ch4\u003e\u003cstrong\u003eSaving data into LibSVM format\u003c/strong\u003e\u003c/h4\u003e\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246375_-210249689",
+      "id": "20200331-141758_2137304896",
+      "dateCreated": "2020-03-31 17:37:26.375",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    },
+    {
+      "text": "%spark\nimport org.apache.spark.mllib.util.MLUtils\nMLUtils.saveAsLibSVMFile(dataLabeledPoint,\"hdfs:///data/data_LibSVM\")",
+      "user": "admin",
+      "dateUpdated": "2020-03-31 17:37:26.375",
+      "config": {
+        "editorSetting": {
+          "language": "scala",
+          "editOnDblClick": false,
+          "completionKey": "TAB",
+          "completionSupport": true
+        },
+        "colWidth": 12.0,
+        "editorMode": "ace/mode/scala",
+        "fontSize": 9.0,
+        "results": {},
+        "enabled": true
+      },
+      "settings": {
+        "params": {},
+        "forms": {}
+      },
+      "results": {
+        "code": "ERROR",
+        "msg": [
+          {
+            "type": "TEXT",
+            "data": "org.apache.spark.SparkException: Job aborted.\n  at org.apache.spark.internal.io.SparkHadoopWriter$.write(SparkHadoopWriter.scala:100)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply$mcV$sp(PairRDDFunctions.scala:1096)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1094)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopDataset$1.apply(PairRDDFunctions.scala:1094)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)\n  at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)\n  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopDataset(PairRDDFunctions.scala:1094)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply$mcV$sp(PairRDDFunctions.scala:1067)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:1032)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$4.apply(PairRDDFunctions.scala:1032)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)\n  at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)\n  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:1032)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply$mcV$sp(PairRDDFunctions.scala:958)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:958)\n  at org.apache.spark.rdd.PairRDDFunctions$$anonfun$saveAsHadoopFile$1.apply(PairRDDFunctions.scala:958)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)\n  at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)\n  at org.apache.spark.rdd.PairRDDFunctions.saveAsHadoopFile(PairRDDFunctions.scala:957)\n  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply$mcV$sp(RDD.scala:1499)\n  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1478)\n  at org.apache.spark.rdd.RDD$$anonfun$saveAsTextFile$1.apply(RDD.scala:1478)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:151)\n  at org.apache.spark.rdd.RDDOperationScope$.withScope(RDDOperationScope.scala:112)\n  at org.apache.spark.rdd.RDD.withScope(RDD.scala:363)\n  at org.apache.spark.rdd.RDD.saveAsTextFile(RDD.scala:1478)\n  at org.apache.spark.mllib.util.MLUtils$.saveAsLibSVMFile(MLUtils.scala:186)\n  ... 91 elided\nCaused by: org.apache.spark.SparkException: Job 95 cancelled part of cancelled job group zeppelin-2F43VUBPK-20200331-141818_1191576616\n  at org.apache.spark.scheduler.DAGScheduler.org$apache$spark$scheduler$DAGScheduler$$failJobAndIndependentStages(DAGScheduler.scala:1651)\n  at org.apache.spark.scheduler.DAGScheduler.handleJobCancellation(DAGScheduler.scala:1586)\n  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply$mcVI$sp(DAGScheduler.scala:811)\n  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:811)\n  at org.apache.spark.scheduler.DAGScheduler$$anonfun$handleJobGroupCancelled$1.apply(DAGScheduler.scala:811)\n  at scala.collection.mutable.HashSet.foreach(HashSet.scala:78)\n  at org.apache.spark.scheduler.DAGScheduler.handleJobGroupCancelled(DAGScheduler.scala:811)\n  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.doOnReceive(DAGScheduler.scala:1841)\n  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1821)\n  at org.apache.spark.scheduler.DAGSchedulerEventProcessLoop.onReceive(DAGScheduler.scala:1810)\n  at org.apache.spark.util.EventLoop$$anon$1.run(EventLoop.scala:48)\n  at org.apache.spark.scheduler.DAGScheduler.runJob(DAGScheduler.scala:642)\n  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2039)\n  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2060)\n  at org.apache.spark.SparkContext.runJob(SparkContext.scala:2092)\n  at org.apache.spark.internal.io.SparkHadoopWriter$.write(SparkHadoopWriter.scala:78)\n  ... 120 more\n"
+          }
+        ]
+      },
+      "apps": [],
+      "jobName": "paragraph_1585676246375_-893977598",
+      "id": "20200331-141818_1191576616",
+      "dateCreated": "2020-03-31 17:37:26.375",
+      "status": "READY",
+      "errorMessage": "",
+      "progressUpdateIntervalMs": 500
+    }
+  ],
+  "name": "Final Dataset",
+  "id": "2F7N83J49",
+  "noteParams": {},
+  "noteForms": {},
+  "angularObjects": {},
+  "config": {
+    "isZeppelinNotebookCronEnable": false
+  },
+  "info": {}
+}
